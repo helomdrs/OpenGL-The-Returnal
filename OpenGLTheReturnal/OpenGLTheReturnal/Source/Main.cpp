@@ -1,9 +1,8 @@
-#define SDL_MAIN_HANDLED
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <SFML/Window.hpp>
 
 #include <iostream>
 
@@ -31,6 +30,14 @@ int main(void)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); //SDL buffer size
 
+    //SFML initialization and property settings
+    sf::ContextSettings sfmlSettings;
+    sfmlSettings.depthBits = 24;
+    sfmlSettings.stencilBits = 8;
+    sfmlSettings.majorVersion = 3;
+    sfmlSettings.minorVersion = 3;
+    sfmlSettings.attributeFlags = sf::ContextSettings::Core;
+
     // Create a GLFW windowed mode window and its OpenGL context
     glfwWindow = glfwCreateWindow(640, 480, "Hello GLFW", NULL, NULL);
     if (!glfwWindow)
@@ -55,12 +62,16 @@ int main(void)
     //Creates a context to add the window to it
     SDL_GLContext sdlContext = SDL_GL_CreateContext(sdlWindow);
 
-    SDL_version sdlVersion{};
-    SDL_VERSION(&sdlVersion);
-    std::cout << "Status: Using SDL " << (int)sdlVersion.major << "." << (int)sdlVersion.minor << "." << (int)sdlVersion.patch << std::endl;
-    std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
-    std::cout << "Status: Using GL " << glGetString(GL_VERSION) << std::endl;
+    //Creates a SFML window
+    sf::Window sfmlWindow(sf::VideoMode(640, 480, 32), "Hello SFML", sf::Style::Default, sfmlSettings);
 
+    SDL_version sdlVersion{};
+    SDL_VERSION(&sdlVersion)
+    std::cout << "Status: Using GL " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
+    std::cout << "Status: Using SDL " << (int)sdlVersion.major << "." << (int)sdlVersion.minor << "." << (int)sdlVersion.patch << std::endl;
+    std::cout << "Status: Using SFML 2.6.1" << std::endl;
+    
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(glfwWindow))
     {
