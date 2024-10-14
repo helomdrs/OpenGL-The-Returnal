@@ -440,6 +440,7 @@
     <ClInclude Include="Source\glm\glm\vec3.hpp" />
     <ClInclude Include="Source\glm\glm\vec4.hpp" />
     <ClInclude Include="Source\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="Source\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\glm\glm\detail\func_common.inl" />
@@ -580,6 +581,8 @@
     <None Include="Source\glm\glm\gtx\vector_angle.inl" />
     <None Include="Source\glm\glm\gtx\vector_query.inl" />
     <None Include="Source\glm\glm\gtx\wrap.inl" />
+    <None Include="Resources\Shaders\Core\core.frag" />
+    <None Include="Resources\Shaders\Core\core.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

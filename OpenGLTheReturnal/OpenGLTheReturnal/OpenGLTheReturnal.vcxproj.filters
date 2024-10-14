@@ -890,6 +890,9 @@
     <ClInclude Include="Source\glm\glm\vector_relational.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\glm\glm\detail\func_common.inl">
@@ -1306,5 +1309,7 @@
     <None Include="Source\glm\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="Resources\Shaders\Core\core.vs" />
+    <None Include="Resources\Shaders\Core\core.frag" />
   </ItemGroup>
 </Project>

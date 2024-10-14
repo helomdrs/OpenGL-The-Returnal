@@ -3,11 +3,10 @@
 
 #include <iostream>
 
+#include "Shader.h"
+
 //Window dimensions
 const GLint WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480;
-
-const GLchar* vertexShaderSource = "#version 330 core\nlayout(location = 0) in vec3 position;\nvoid main()\n{\ngl_Position = vec4(position, 1.0);\n}\n";
-const GLchar* fragmentShaderSource = "#version 330 core\nout vec4 color;\nvoid main()\n{\ncolor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n}\n";
 
 int main(void)
 {
@@ -51,57 +50,19 @@ int main(void)
 
     std::cout << "Status: Using GL " << glGetString(GL_VERSION) << std::endl;
     std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
+    std::cout << "------------------------------------------" << std::endl;
 
     //Define the viewport dimensions
     glViewport(0, 0, screenWidth, screenHeight);
 
-    //Build vertex and fragmant shaders
-    GLint success;
-    GLchar infoLog[512];
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR: Vertex Shader compilation failed: " << infoLog << std::endl;
-    }
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR: Fragment Shader compilation failed: " << infoLog << std::endl;
-    }
-
-    //Shader program linking and compiling 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR: Shader program linking failed: " << infoLog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    Shader ourShader("Resources/Shaders/Core/core.vs", "Resources/Shaders/Core/core.frag");
 
     //Creating the vertex data to draw the triangle
     GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.0f, //bottom left
-         0.5f, -0.5f, 0.0f, //bottom right
-         0.0f,  0.5f, 0.0f  //top middle
+        //position              //color
+        -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f, //bottom left
+         0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f, //bottom right
+         0.0f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f  //top middle
     };
 
     //creating and binding vertex buffer and array objects
@@ -113,22 +74,21 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
     glBindVertexArray(0);
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(glfwWindow))
     {
-        //Check if any input events have been activated and call corresponding response function
-        glfwPollEvents();
-
-
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        ourShader.Use();
         glBindVertexArray(vertexArrayObject);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
@@ -143,7 +103,6 @@ int main(void)
     //Cleanup
     glDeleteVertexArrays(1, &vertexArrayObject);
     glDeleteBuffers(1, &vertexBufferObject);
-
 
     glfwTerminate();
     return 0;
